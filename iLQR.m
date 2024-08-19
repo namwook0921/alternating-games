@@ -10,7 +10,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U1_array = zeros(U1_size(1), U1_size(2), T);
     U2_array = zeros(U2_size(1), U2_size(2), T);
 
-    step_threshold = 0.5;
+    step_threshold = 0.2;
     converge_threshold = 0.05;
 
     A_array = zeros(X_size(1), X_size(1), T);
@@ -28,9 +28,9 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
     n = 1;
 
-    initial_eta = 1;
+    initial_eta = eta;
     eta_step = 0.5;
-    max_iter = 5;
+    max_iter = 4;
 
     allVars = [x; u1; u2];
 
@@ -90,61 +90,38 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
             [Q2_array(:, :, i), R2_array(:, :, i), q2_array(:, :, i), r2_array(:, :, i)] = quadraticizeCost(g2, x, u2, X_array(:, :, i + 1), U2_array(:, :, i));
         end
         
-        % disp(Q1_array(:, :, 30));
-        % 
-        % disp(R1_array(:, :, 30));
-        % 
-        % disp(q1_array(:, :, 30));
-        % 
-        % disp(r1_array(:, :, 30));
        
         % Find the solution on delta X
         [delta_X_array, delta_X_prime_array, S1_array, S2_array, T1_array, T2_array, delta_U1_array, delta_U2_array, alpha1_array, alpha2_array, L1, L2] ...
         = lq_cost_solution(first_X, first_B2, first_U2, A_array, A_prime_array, B1_array, B2_array, Q1_array, Q2_array, R1_array, R2_array, q1_array, q2_array, r1_array, r2_array, T);
-        
-        % disp(alpha1_array);
-
-        % Display the delta X solution
-        % I suspect it is inaccurate but cannot find the reason.
-        % x1_vector = squeeze(delta_X_array(1, 1, :));
-        % x2_vector = squeeze(delta_X_array(5, 1, :));
-        % 
-        % time_frame = 1 : T + 1;
-        % 
-        % figure;
-        % 
-        % plot(time_frame, x1_vector, 'b', time_frame, x2_vector, 'r');
-        % 
-        % xlabel('time');
-        % legend('Player 1', 'Player 2');
         
         
         % Start from same initial state, then update the trajectory based
         % on the new strategy which involves alpha
         
         for step_num = 1:max_iter
-            eta = initial_eta * (eta_step ^ (step_num - 1));
+            curr_eta = initial_eta * (eta_step ^ (step_num - 1));
 
             new_X_array(:, :, 1) = first_X;
       
             new_U1_array(:, :, 1) = U1_array(:, :, 1) - S1_array(:, :, 1) * (new_X_array(:, :, 1) - X_array(:, :, 1)) ... 
-                - eta * alpha1_array(:, :, 1);
+                - curr_eta * alpha1_array(:, :, 1);
     
             new_X_prime_array(:, :, 1) = double(subs(f, allVars, [new_X_array(:, :, 1); new_U1_array(:, :, 1); first_U2]));
     
         
             new_U2_array(:, :, 1) = U2_array(:, :, 1) - S2_array(:, :, 1) * (new_X_prime_array(:, :, 1) - X_prime_array(:, :, 1)) ... 
-                - T2_array(:, :, 1) * (new_U1_array(:, :, 1) - U1_array(:, :, 1)) - eta * alpha2_array(:, :, 1);
+                - T2_array(:, :, 1) * (new_U1_array(:, :, 1) - U1_array(:, :, 1)) - curr_eta * alpha2_array(:, :, 1);
     
             new_X_array(:, :, 2) = double(subs(f, allVars, [new_X_prime_array(:, :, 1); new_U1_array(:, :, 1); new_U2_array(:, :, 1)]));
         
             for i = 2 : T
                 new_U1_array(:, :, i) = U1_array(:, :, i) - S1_array(:, :, i) * (new_X_array(:, :, i) - X_array(:, :, i)) ... 
-                    - T1_array(:, :, i) * (new_U2_array(:, :, i - 1) - U2_array(:, :, i - 1)) - eta * alpha1_array(:, :, i);
+                    - T1_array(:, :, i) * (new_U2_array(:, :, i - 1) - U2_array(:, :, i - 1)) - curr_eta * alpha1_array(:, :, i);
                 new_X_prime_array(:, :, i) = subs(f, allVars, [new_X_array(:, :, i); new_U1_array(:, :, i); new_U2_array(:, :, i - 1)]);
         
                 new_U2_array(:, :, i) = U2_array(:, :, i) - S2_array(:, :, i) * (new_X_prime_array(:, :, i) - X_prime_array(:, :, i)) ... 
-                    - T2_array(:, :, i) * (new_U1_array(:, :, i) - U1_array(:, :, i)) - eta * alpha2_array(:, :, i);
+                    - T2_array(:, :, i) * (new_U1_array(:, :, i) - U1_array(:, :, i)) - curr_eta * alpha2_array(:, :, i);
                 new_X_array(:, :, i + 1) = subs(f, allVars, [new_X_prime_array(:, :, i); new_U1_array(:, :, i); new_U2_array(:, :, i)]);
             end
     
