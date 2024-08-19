@@ -92,7 +92,7 @@ function [] = iLQRtests()
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 1;
+    eta = 0.8;
 
 
     [new_X_array, new_X_prime_array, new_U1_array, new_U2_array, L1, L2] = ...

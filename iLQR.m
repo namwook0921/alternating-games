@@ -11,7 +11,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U2_array = zeros(U2_size(1), U2_size(2), T);
 
     step_threshold = 0.2;
-    converge_threshold = 0.05;
+    converge_threshold = 0.02;
 
     A_array = zeros(X_size(1), X_size(1), T);
     A_prime_array = zeros(X_size(1), X_size(1), T);
@@ -30,7 +30,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
     initial_eta = eta;
     eta_step = 0.5;
-    max_iter = 4;
+    max_iter = 5;
 
     allVars = [x; u1; u2];
 
@@ -93,7 +93,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
         
        
 
-        for i = 2 : T
+        parfor i = 2 : T
             [A_array(:, :, i), B1_array(:, :, i), B2_array(:, :, i)] = ...
                 linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, i), X_prime_array(:, :, i), U1_array(:, :, i), U2_array(:, :, i - 1));
             [A_prime_array(:, :, i), B1_array(:, :, i), B2_array(:, :, i)] = ...
@@ -102,7 +102,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     
 
         % Quadraticize the costs (update Q, R arrays)
-        for i = 1 : T
+        parfor i = 1 : T
             [Q1_array(:, :, i), R1_array(:, :, i), q1_array(:, :, i), r1_array(:, :, i)] = quadraticizeCost(G1_x, G1_u, H1_x, H1_u, x, u1, X_prime_array(:, :, i), U1_array(:, :, i));
             [Q2_array(:, :, i), R2_array(:, :, i), q2_array(:, :, i), r2_array(:, :, i)] = quadraticizeCost(G2_x, G2_u, H2_x, H2_u, x, u2, X_array(:, :, i + 1), U2_array(:, :, i));
         end
@@ -192,16 +192,16 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     end
 
     % Calculating cost
-    L1 = 0;
-    L2 = 0;
-
-    for i = 1 : T
-        L1 = L1 + double(subs(g1, [x; u1], [X_prime_array(:, :, i); U1_array(:, :, i)]));
-        L2 = L2 + double(subs(g2, [x; u2], [X_array(:, :, i + 1); U2_array(:, :, i)]));
-    end
-
-    disp(L1);
-    disp(L2);
+    % L1 = 0;
+    % L2 = 0;
+    % 
+    % for i = 1 : T
+    %     L1 = L1 + double(subs(g1, [x; u1], [X_prime_array(:, :, i); U1_array(:, :, i)]));
+    %     L2 = L2 + double(subs(g2, [x; u2], [X_array(:, :, i + 1); U2_array(:, :, i)]));
+    % end
+    % 
+    % disp(L1);
+    % disp(L2);
 
 
 end
