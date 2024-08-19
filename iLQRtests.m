@@ -2,9 +2,9 @@ function [] = iLQRtests()
     % d_safe = 0.2;
     % Delta_t = 0.1;
     % v_0 = 0.1;
-    % T = 10;
+    % T = 20;
     % 
-    % eta = 0.5;
+    % eta = 0.8;
     % 
     % A = [1 Delta_t 0 0;
     %      0 1 0 0;
@@ -48,6 +48,7 @@ function [] = iLQRtests()
     % syms f(x, u1, u2);
     % syms g1(x, u1);
     % syms g2(x, u2);
+
     A = [1 0 0 delta_t * cos(beta1) 0 0 0 0;
          0 1 0 delta_t * sin(beta1) 0 0 0 0;
          0 0 1 0 0 0 0 0;
@@ -78,7 +79,7 @@ function [] = iLQRtests()
     f = A * x + B1 * u1 + B2 * u2;
 
     g1 = 8*(x1 - 0.2)^2 + 2*(u1' * u1) + 2*(v1 - 1)^2;
-    g2 = 4*(x2 - 0.2)^2 + 4*(v2 - 1)^2 + 2*(u2' * u2);
+    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + 2*(u2' * u2);
 
 
     first_U2 = [0; 0];

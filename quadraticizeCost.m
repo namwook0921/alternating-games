@@ -1,26 +1,17 @@
-function [Q, R, q, r] = quadraticizeCost(g, x, u, x0, u0)
+function [Q, R, q, r] = quadraticizeCost(G_x, G_u, H_x, H_u, x, u, x0, u0)
 
 
     allVars = [x; u];
     allVars0 = [x0; u0];
-    
-
-
-    gradG_x = gradient(g, x);
-    gradG_u = gradient(g, u);
+   
 
     % disp(allVars0);
     % disp(allVars);
     % disp(gradG_x);
     % disp(gradG_u);
 
-    q = subs(gradG_x, allVars, allVars0);
-    r = subs(gradG_u, allVars, allVars0);
-
-    
-
-    H_x = hessian(g, x);  
-    H_u = hessian(g, u); 
+    q = subs(G_x, allVars, allVars0);
+    r = subs(G_u, allVars, allVars0);
 
     % disp(H_x);
     % disp(H_u);
