@@ -155,6 +155,9 @@ for i = 2 : T
     X_array(:, :, i + 1) = A * X_prime_array(:, :, i) + B1 * U1_array(:, :, i) + B2 * U2_array(:, :, i);
 end
 
+disp(S1_array);
+disp(S2_array);
+
 L1 = X_prime_array(:, :, 1)' * Q1_array(:, :, 1) * X_prime_array(:, :, 1) ...
     + U1_array(:, :, 1)' * R1_array(:, :, 1) * U1_array(:, :, 1) ...
     + X_prime_array(:, :, 1)' * P1_array(:, :, 1) * U1_array(:, :, 1);

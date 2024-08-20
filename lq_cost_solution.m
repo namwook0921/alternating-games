@@ -215,12 +215,13 @@ final_X_prime_array = zeros(n, 1, T);
 final_S1_array = zeros(m, n, T);
 final_S2_array = zeros(m, n, T);
 
-
+% disp(P1_array)
+% disp(P2_array)
 for i = 1 : T
     alpha1_array(:, :, i) = S1_array(:, S1_size(2) : S1_size(2), i);
     alpha2_array(:, :, i) = S2_array(:, S2_size(2) : S2_size(2), i);
     final_S1_array(:, :, i) = S1_array(:, 1 : S1_size(2) - 1, i);
-    final_S2_array(:, :, i) = S1_array(:, 1 : S2_size(2) - 1, i);
+    final_S2_array(:, :, i) = S2_array(:, 1 : S2_size(2) - 1, i);
     final_X_array(:, :, i) = X_array(1 : n, :, i);
     final_X_prime_array(:, :, i) = X_prime_array(1 : n,: , i);
 end

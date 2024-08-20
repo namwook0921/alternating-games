@@ -1,5 +1,5 @@
 function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
-    iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta)
+    iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, plot_num)
 
     X_size = size(X_array(:, :, 1));
     U1_size = size(U1_array(:, :, 1));
@@ -10,8 +10,8 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U1_array = zeros(U1_size(1), U1_size(2), T);
     U2_array = zeros(U2_size(1), U2_size(2), T);
 
-    step_threshold = 0.2;
-    converge_threshold = 0.02;
+    step_threshold = 0.1;
+    converge_threshold = 0.01;
 
     A_array = zeros(X_size(1), X_size(1), T);
     A_prime_array = zeros(X_size(1), X_size(1), T);
@@ -30,7 +30,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
     initial_eta = eta;
     eta_step = 0.5;
-    max_iter = 5;
+    max_iter = 10;
 
     allVars = [x; u1; u2];
 
@@ -56,48 +56,64 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     % Initial trajectory when there is no control
     [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_X, T);
 
-
     % Loop until converges
     while 1
         disp(n)
         n = n + 1;
         
-        if mod(n, 5) == 0
-        % if true
-            % Graph of nth trajectory
-            x1 = squeeze(X_array(1, 1, :));
-            y1 = squeeze(X_array(2, 1, :));
-            x2 = squeeze(X_array(5, 1, :));
-            y2 = squeeze(X_array(6, 1, :));
-
-
-            figure;
-            plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
-
-            hold on;
-
-            plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-            xlabel('X Coordinate');
-            ylabel('Y Coordinate');
-            legend show; 
-            grid on; 
+        if plot_num == 1
+            if mod(n, 5) == 0
+            % if true
+                % Graph of nth trajectory
+                x1 = squeeze(X_array(1, 1, :));
+                y1 = squeeze(X_array(2, 1, :));
+                x2 = squeeze(X_array(5, 1, :));
+                y2 = squeeze(X_array(6, 1, :));
+    
+    
+                figure;
+                plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
+    
+                hold on;
+    
+                plot(x2, y2, 's-', 'DisplayName', 'Object 2');
+    
+                xlabel('X Coordinate');
+                ylabel('Y Coordinate');
+                legend show; 
+                grid on; 
+            end
         end
 
+        if plot_num == 2
+            if true
+                % Graph of nth trajectory
+                x1 = squeeze(X_array(1, 1, :));
+                y1 = squeeze(X_array(2, 1, :));
+    
+                figure;
+                plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
+    
+                xlabel('X Coordinate');
+                ylabel('Y Coordinate');
+                legend show; 
+                grid on; 
+            end
+        end
         
         % Linearize the System (update A, B arrays)
         [A_array(:, :, 1), B1_array(:, :, 1), B2_dummy] = ...
-            linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, 1), X_prime_array(:, :, 1), U1_array(:, :, 1), first_U2);
+            linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, 1), U1_array(:, :, 1), first_U2);
         [A_prime_array(:, :, 1), B1_dummy, B2_array(:, :, 1)] = ...
-            linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, 1), X_prime_array(:, :, 1), U1_array(:, :, 1), U2_array(:, :, 1));
+            linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_prime_array(:, :, 1), U1_array(:, :, 1), U2_array(:, :, 1));
         
        
 
         parfor i = 2 : T
-            [A_array(:, :, i), B1_array(:, :, i), B2_array(:, :, i)] = ...
-                linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, i), X_prime_array(:, :, i), U1_array(:, :, i), U2_array(:, :, i - 1));
-            [A_prime_array(:, :, i), B1_array(:, :, i), B2_array(:, :, i)] = ...
-                linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, i), X_prime_array(:, :, i), U1_array(:, :, i), U2_array(:, :, i));
+            [A_array(:, :, i), B1_array(:, :, i), B2_dummy] = ...
+                linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_array(:, :, i), U1_array(:, :, i), U2_array(:, :, i - 1));
+            [A_prime_array(:, :, i), B1_dummy, B2_array(:, :, i)] = ...
+                linearizeSystem(A_jacobian, B1_jacobian, B2_jacobian, x, u1, u2, X_prime_array(:, :, i), U1_array(:, :, i), U2_array(:, :, i));
         end
     
 
@@ -115,7 +131,13 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
         
         % Start from same initial state, then update the trajectory based
         % on the new strategy which involves alpha
-        
+
+        disp(S1_array)
+        disp(S2_array)
+        % disp(alpha1_array)
+        % disp(alpha2_array)
+   
+
         for step_num = 1:max_iter
             curr_eta = initial_eta * (eta_step ^ (step_num - 1));
 
@@ -173,11 +195,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
                 converge = false;
             end
         end
-
-        if converge
-            disp("converged")
-            break;
-        end
+        
         
         % Updating the states and actions for next iteration
         for i = 1 : T
@@ -188,6 +206,13 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
         end
 
         X_array(:, :, T + 1) = new_X_array(:, :, T + 1);
+
+
+        if converge
+            disp("converged")
+
+            break;
+        end
 
     end
 

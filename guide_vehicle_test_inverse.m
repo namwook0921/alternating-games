@@ -1,6 +1,6 @@
-function [] = guide_vehicle_test()
+function [] = guide_vehicle_test_inverse()
     delta_t = 0.05;
-    first_X = [0.5 0.5 2*pi/3 1 1 0 pi/2 1]';
+    first_X = [1 0 pi/2 1 0.5 0.5 2*pi/3 1]';
 
     syms x1 y1 beta1 v1 x2 y2 beta2 v2
     syms omega1 alpha1
@@ -39,8 +39,8 @@ function [] = guide_vehicle_test()
 
     f = A * x + B1 * u1 + B2 * u2;
 
-    g1 = 8*(x1 - 0.2)^2 + 2*(u1' * u1) + 2*(v1 - 1)^2;
-    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + 2*(u2' * u2);
+    g1 = 4*(x2 - x1)^2 + 4*(v1 - 1)^2 + 2*(u1' * u1);
+    g2 = 8*(x2 - 0.2)^2 + 2*(u2' * u2) + 2*(v2 - 1)^2;
 
 
     first_U2 = [0; 0];
