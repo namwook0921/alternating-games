@@ -70,14 +70,14 @@ P2_array(:, :, end) = zeros(P_size);
 
 
 % Compute S2_K, T2_K, S1_K, T1_K of last stage
-S2_array(:, :, T) = (R2_array(:, :,T) + B2' * Q2_array(:, :,T) * B2 + B2' * P2_array(:, :,T) ...
-    + P2_array(:, :,T)' * B2) \ (B2' * Q2_array(:, :,T) + P2_array(:, :,T)') * A;
-T2_array(:, :, T) = (R2_array(:, :,T) + B2' * Q2_array(:, :,T) * B2 + B2' * P2_array(:, :,T) + ...
-    + P2_array(:, :,T)' * B2) \ (B2' * Q2_array(:, :,T) + P2_array(:, :,T)') * B1;
-S1_array(:, :, T) = (R1_array(:, :,T) + B1' * Q1_array(:, :,T) * B1 + B1' * P1_array(:, :,T) ...
-    + P1_array(:, :,T)' * B1) \ (B1' * Q1_array(:, :,T) + P1_array(:, :,T)') * A;
-T1_array(:, :, T) = (R1_array(:, :,T) + B1' * Q1_array(:, :,T) * B1 + B1' * P1_array(:, :,T) ...
-    + P1_array(:, :,T)' * B1) \ (B1' * Q1_array(:, :,T) + P1_array(:, :,T)') * B2;
+S2_array(:, :, T) = (R2_array(:, :,T) + B2' * Q2_array(:, :,T) * B2 + 2 * B2' * P2_array(:, :,T)) ...
+    \ (B2' * Q2_array(:, :,T) + P2_array(:, :,T)') * A;
+T2_array(:, :, T) = (R2_array(:, :,T) + B2' * Q2_array(:, :,T) * B2 + 2 * B2' * P2_array(:, :,T)) ...
+    \ (B2' * Q2_array(:, :,T) + P2_array(:, :,T)') * B1;
+S1_array(:, :, T) = (R1_array(:, :,T) + B1' * Q1_array(:, :,T) * B1 + 2 * B1' * P1_array(:, :,T)) ...
+    \ (B1' * Q1_array(:, :,T) + P1_array(:, :,T)') * A;
+T1_array(:, :, T) = (R1_array(:, :,T) + B1' * Q1_array(:, :,T) * B1 + 2 * B1' * P1_array(:, :,T)) ...
+    \ (B1' * Q1_array(:, :,T) + P1_array(:, :,T)') * B2;
 
 
 % Recursive step of computing all S, T in all time horizon from last to
@@ -155,8 +155,8 @@ for i = 2 : T
     X_array(:, :, i + 1) = A * X_prime_array(:, :, i) + B1 * U1_array(:, :, i) + B2 * U2_array(:, :, i);
 end
 
-disp(S1_array);
-disp(S2_array);
+% disp(S1_array);
+% disp(S2_array);
 
 L1 = X_prime_array(:, :, 1)' * Q1_array(:, :, 1) * X_prime_array(:, :, 1) ...
     + U1_array(:, :, 1)' * R1_array(:, :, 1) * U1_array(:, :, 1) ...

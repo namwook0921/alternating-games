@@ -12,7 +12,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U1_array = zeros(U1_size(1), U1_size(2), T);
     U2_array = zeros(U2_size(1), U2_size(2), T);
 
-    step_threshold = 0.5;
+    step_threshold = 0.1;
     converge_threshold = 0.01;
 
     A_array = zeros(X_size(1), X_size(1), T);
@@ -141,7 +141,12 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
             new_X_prime_array(:, :, 1) = double(subs(f, allVars, [new_X_array(:, :, 1); new_U1_array(:, :, 1); first_U2]));
     
             new_U2_array(:, :, 1) = U2_array(:, :, 1) - S2_array(:, :, 1) * (new_X_prime_array(:, :, 1) - X_prime_array(:, :, 1)) ... 
-                - T2_array(:, :, 1) * (new_U1_array(:, :, 1) - U1_array(:, :, 1)) - curr_eta * alpha2_array(:, :, 1);  
+                - T2_array(:, :, 1) * (new_U1_array(:, :, 1) - U1_array(:, :, 1)) - curr_eta * alpha2_array(:, :, 1);
+    
+
+            disp(new_U2_array(:, :, 1) - U2_array(:, :, 1))
+
+    
 
             new_X_array(:, :, 2) = double(subs(f, allVars, [new_X_prime_array(:, :, 1); new_U1_array(:, :, 1); new_U2_array(:, :, 1)]));
         
@@ -150,12 +155,17 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
                     - T1_array(:, :, i) * (new_U2_array(:, :, i - 1) - U2_array(:, :, i - 1)) - curr_eta * alpha1_array(:, :, i);
                 new_X_prime_array(:, :, i) = subs(f, allVars, [new_X_array(:, :, i); new_U1_array(:, :, i); new_U2_array(:, :, i - 1)]);
 
+                disp(new_U1_array(:, :, i) - U1_array(:, :, i))
+
                 new_U2_array(:, :, i) = U2_array(:, :, i) - S2_array(:, :, i) * (new_X_prime_array(:, :, i) - X_prime_array(:, :, i)) ... 
                     - T2_array(:, :, i) * (new_U1_array(:, :, i) - U1_array(:, :, i)) - curr_eta * alpha2_array(:, :, i);
                 new_X_array(:, :, i + 1) = subs(f, allVars, [new_X_prime_array(:, :, i); new_U1_array(:, :, i); new_U2_array(:, :, i)]);
 
+
+                disp(new_U2_array(:, :, i) - U2_array(:, :, i))
             end
 
+            disp("DONE")
     
             step_converged = true;
 

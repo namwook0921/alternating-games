@@ -28,7 +28,7 @@ for i = 1: T
     new_B1_array(:, :, i) = [B1_array(:, :, i); zeros(size(first_U2))'];
     new_B2_array(:, :, i) = [B2_array(:, :, i); zeros(size(first_U2))'];
     new_P1_array(:, :, i) = [P_zeros; r1_array(:, :, i)'];
-    new_P2_array(:, :, i) = [P_zeros; r2_array(:, :, i)'];
+    new_P2_array(:, :, i) = [P_zeros; r1_array(:, :, i)'];
 
 end
 
@@ -96,8 +96,10 @@ Q1_array_cumulative(:, :, end) = new_Q1_array(:, :, end);
 Q2_array_cumulative(:, :, end) = new_Q2_array(:, :, end);
 R1_array_cumulative(:, :, end) = R1_array(:, :, end);
 R2_array_cumulative(:, :, end) = R2_array(:, :, end);
-P1_array(:, :, end) = new_P1_array(:, :, end);
-P2_array(:, :, end) = new_P2_array(:, :, end);
+P1_array(:, :, end) = zeros(P_size);
+P1_array(n + 1, :, end) = new_P1_array(:, :, end)';
+P2_array(:, :, end) = zeros(P_size);
+P2_array(n + 1, :, end) = new_P2_array(:, :, end)';
 
 
 % Compute S2_K, T2_K, S1_K, T1_K of last stage
@@ -164,7 +166,7 @@ for i = T: -1: 2
    P1_array(:, :, i - 1) = V1_array(:, :, i)' * Q1_array_cumulative(:, :, i) * W1_array(:, :, i) ...
        + Y1_array(:, :, i)' * R1_array_cumulative(i) * Z1_array(:, :, i) ...
        + V1_array(:, :, i)' * P1_array(:, :, i) * Z1_array(:, :, i) ...
-       + Y1_array(:, :, i)' * P1_array(:, :, i)' * W1_array(:, :, i) + new_P1_array(:, :, i - 1);
+       + Y1_array(:, :, i)' * P1_array(:, :, i)' * W1_array(:, :, i) + [P_zeros; r1_array(:, :, end)'];
 
 
    % disp(size(P1_array(:, :, i - 1)));
