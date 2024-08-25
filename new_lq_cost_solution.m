@@ -32,12 +32,10 @@ for i = 1: T
     new_B2_array(:, :, i) = [B2_array(:, :, i); zeros(size(first_U2))'];
     new_P1_array(:, :, i) = [P_zeros; r1_array(:, :, i)'];
     new_P2_array(:, :, i) = [P_zeros; r2_array(:, :, i)'];
-
 end
 
 X0 = [X0; 1];
 first_B2 = [first_B2; zeros(m, 1)'];
-
 
 [X_array, X_prime_array, S1_array, S2_array, T1_array, T2_array, U1_array, U2_array, L1, L2] ...
     = linear_offset_array_solution(X0, first_B2, first_U2, new_A_array, new_A_prime_array, new_B1_array, new_B2_array, new_Q1_array, new_Q2_array, R1_array, R2_array, new_P1_array, new_P2_array, T);

@@ -2,10 +2,10 @@
 % Substitute all A, B, Q, R to array form
 
 function [X_array, X_prime_array, S1_array, S2_array, T1_array, T2_array, U1_array, U2_array, L1, L2] ...
-    = linear_offset_array_solution(X0, first_B2, first_U2, A_array, A_prime_array, B1_array, B2_array, Q1_array, Q2_array, R1_array, R2_array, P1_array, P2_array, T)
+    = linear_offset_array_solution(first_X, first_B2, first_U2, A_array, A_prime_array, B1_array, B2_array, Q1_array, Q2_array, R1_array, R2_array, P1_array, P2_array, T)
  
 % Define size variable
-X_size = size(X0);
+X_size = size(first_X);
 U_size = size(first_U2);
 Q_size = size(Q1_array(:, :, 1));
 R_size = size(R1_array(:, :, 1));
@@ -19,7 +19,7 @@ Z_size = [U_size(1), U_size(1)];
 
 % Initialize list of Xs, Us
 X_array = zeros(X_size(1), X_size(2), T + 1);
-X_array(:, :, 1) = X0;
+X_array(:, :, 1) = first_X;
 X_prime_array = zeros(X_size(1), X_size(2), T);
 
 U1_array = zeros(U_size(1), U_size(2), T);
@@ -72,7 +72,7 @@ P2_array_cumulative(:, :, end) = P2_array(:, :, end);
 % Compute S2_K, T2_K, S1_K, T1_K of last stage
 S2_array(:, :, T) = (R2_array_cumulative(:, :,T) + B2_array(:, :, T)' * Q2_array_cumulative(:, :,T) * B2_array(:, :, T) + B2_array(:, :, T)' * P2_array_cumulative(:, :,T) ...
     + P2_array_cumulative(:, :,T)' * B2_array(:, :, T)) \ (B2_array(:, :, T)' * Q2_array_cumulative(:, :,T) + P2_array_cumulative(:, :,T)') * A_prime_array(:, :, T);
-T2_array(:, :, T) = (R2_array_cumulative(:, :,T) + B2_array(:, :, T)' * Q2_array_cumulative(:, :,T) * B2_array(:, :, T) + B2_array(:, :, T)' * P2_array_cumulative(:, :,T) + ...
+T2_array(:, :, T) = (R2_array_cumulative(:, :,T) + B2_array(:, :, T)' * Q2_array_cumulative(:, :,T) * B2_array(:, :, T) + B2_array(:, :, T)' * P2_array_cumulative(:, :,T) ...
     + P2_array_cumulative(:, :,T)' * B2_array(:, :, T)) \ (B2_array(:, :, T)' * Q2_array_cumulative(:, :,T) + P2_array_cumulative(:, :,T)') * B1_array(:, :, T);
 S1_array(:, :, T) = (R1_array_cumulative(:, :,T) + B1_array(:, :, T)' * Q1_array_cumulative(:, :,T) * B1_array(:, :, T) + B1_array(:, :, T)' * P1_array_cumulative(:, :,T) ...
     + P1_array_cumulative(:, :,T)' * B1_array(:, :, T)) \ (B1_array(:, :, T)' * Q1_array_cumulative(:, :,T) + P1_array_cumulative(:, :,T)') * A_array(:, :, T);
@@ -96,10 +96,10 @@ for i = T: -1: 2
    Z2_array(:, :, i) = S2_array(:, :, i) * B1_array(:, :, i - 1) * T1_array(:, :, i) + T2_array(:, :, i) * T1_array(:, :, i) - S2_array(:, :, i) * B2_array(:, :, i - 1);
    
    % Compute Q2, R2, P2
-   Q2_array_cumulative(:, :, i - 1) = Q2_array(:, :, i - 1) + V2_array(:, :, i)' * Q2_array_cumulative(:, :, i) * V2_array(:, :, i) + ...
-       Y2_array(:, :, i)' * R2_array_cumulative(:, :, i) * Y2_array(:, :, i) + V2_array(:, :, i)' * P2_array_cumulative(:, :, i) * Y2_array(:, :, i);
-   R2_array_cumulative(:, :, i - 1) = R2_array(:, :, i - 1) + W2_array(:, :, i)' * Q2_array_cumulative(:, :, i) * W2_array(:, :, i) + ...
-       Z2_array(:, :, i - 1)' * R2_array_cumulative(:, :, i) * Z2_array(:, :, i) + W2_array(:, :, i)' * P2_array_cumulative(:, :, i) * Z2_array(:, :, i);
+   Q2_array_cumulative(:, :, i - 1) = Q2_array(:, :, i - 1) + V2_array(:, :, i)' * Q2_array_cumulative(:, :, i) * V2_array(:, :, i) ...
+       + Y2_array(:, :, i)' * R2_array_cumulative(:, :, i) * Y2_array(:, :, i) + V2_array(:, :, i)' * P2_array_cumulative(:, :, i) * Y2_array(:, :, i);
+   R2_array_cumulative(:, :, i - 1) = R2_array(:, :, i - 1) + W2_array(:, :, i)' * Q2_array_cumulative(:, :, i) * W2_array(:, :, i) ...
+       + Z2_array(:, :, i)' * R2_array_cumulative(:, :, i) * Z2_array(:, :, i) + W2_array(:, :, i)' * P2_array_cumulative(:, :, i) * Z2_array(:, :, i);
    P2_array_cumulative(:, :, i - 1) = P2_array(:, :, i - 1) + V2_array(:, :, i)' * Q2_array_cumulative(:, :, i) * W2_array(:, :, i) ...
        + Y2_array(:, :, i)' * R2_array_cumulative(:, :, i) * Z2_array(:, :, i) ...
        + V2_array(:, :, i)' * P2_array_cumulative(:, :, i) * Z2_array(:, :, i) ...
@@ -124,13 +124,11 @@ for i = T: -1: 2
 
    % Compute Q1, R1, P1
    Q1_array_cumulative(:, :, i - 1) = Q1_array(:, :, i - 1) + V1_array(:, :, i)' * Q1_array_cumulative(:, :, i) * V1_array(:, :, i) ...
-       + Y1_array(:, :, i)' * R1_array_cumulative(:, :, i) * Y1_array(:, :, i) ...
-       + V1_array(:, :, i)' * P1_array_cumulative(:, :, i) * Y1_array(:, :, i);
+       + Y1_array(:, :, i)' * R1_array_cumulative(:, :, i) * Y1_array(:, :, i) + V1_array(:, :, i)' * P1_array_cumulative(:, :, i) * Y1_array(:, :, i);
    R1_array_cumulative(:, :, i - 1) = R1_array(:, :, i - 1) + W1_array(:, :, i)' * Q1_array_cumulative(:, :, i) * W1_array(:, :, i) ...
-       + Z1_array(:, :, i)' * R1_array_cumulative(:, :, i) * Z1_array(:, :, i) ...
-       + W1_array(:, :, i)' * P1_array_cumulative(:, :, i) * Z1_array(:, :, i);
+       + Z1_array(:, :, i)' * R1_array_cumulative(:, :, i) * Z1_array(:, :, i) + W1_array(:, :, i)' * P1_array_cumulative(:, :, i) * Z1_array(:, :, i);
    P1_array_cumulative(:, :, i - 1) = P1_array(:, :, i - 1) + V1_array(:, :, i)' * Q1_array_cumulative(:, :, i) * W1_array(:, :, i) ...
-       + Y1_array(:, :, i)' * R1_array_cumulative(i) * Z1_array(:, :, i) ...
+       + Y1_array(:, :, i)' * R1_array_cumulative(:, :, i) * Z1_array(:, :, i) ...
        + V1_array(:, :, i)' * P1_array_cumulative(:, :, i) * Z1_array(:, :, i) ...
        + Y1_array(:, :, i)' * P1_array_cumulative(:, :, i)' * W1_array(:, :, i);
 
@@ -145,18 +143,19 @@ for i = T: -1: 2
            P1_array_cumulative(:, :, i - 1)' * B1_array(:, :, i - 1)) \ (B1_array(:, :, i - 1)' * Q1_array_cumulative(:, :, i - 1) + P1_array_cumulative(:, :, i - 1)') * first_B2;
    end
 end
+
  
 % Compute base case X, X', U1, U2
 U1_array(:, :, 1) = -S1_array(:, :, 1) * X_array(:, :, 1) - T1_array(:, :, 1) * first_U2;
 X_prime_array(:, :, 1) = A_array(:, :, 1) * X_array(:, :, 1) + B1_array(:, :, 1) * U1_array(:, :, 1) + first_B2 * first_U2;
-U2_array(:, :, 1) = -S2_array(:, :, 1) * X_prime_array(:, :, 1) - T1_array(:, :, 1) * U1_array(:, :, 1);
+U2_array(:, :, 1) = -S2_array(:, :, 1) * X_prime_array(:, :, 1) - T2_array(:, :, 1) * U1_array(:, :, 1);
 X_array(:, :, 2) = A_prime_array(:, :, 1) * X_prime_array(:, :, 1) + B1_array(:, :, 1) * U1_array(:, :, 1) + first_B2 * U2_array(:, :, 1);
 
 % Recursively compute the state variables and action from start to end
 for i = 2 : T
     U1_array(:, :, i) = -S1_array(:, :, i) * X_array(:, :, i) - T1_array(:, :, i) * U2_array(:, :, i - 1);
     X_prime_array(:, :, i) = A_array(:, :, i) * X_array(:, :, i) + B1_array(:, :, i) * U1_array(:, :, i) + B2_array(:, :, i - 1) * U2_array(:, :, i - 1);
-    U2_array(:, :, i) = -S2_array(:, :, i) * X_prime_array(:, :, i) - T1_array(:, :, i) * U1_array(:, :, i);
+    U2_array(:, :, i) = -S2_array(:, :, i) * X_prime_array(:, :, i) - T2_array(:, :, i) * U1_array(:, :, i);
     X_array(:, :, i + 1) = A_prime_array(:, :, i) * X_prime_array(:, :, i) + B1_array(:, :, i) * U1_array(:, :, i) + B2_array(:, :, i) * U2_array(:, :, i);
 end
 
@@ -167,5 +166,6 @@ L1 = X_prime_array(:, :, 1)' * Q1_array_cumulative(:, :, 1) * X_prime_array(:, :
 L2 = X_array(:, :, 2)' * Q2_array_cumulative(:, :, 1) * X_array(:, :, 2) ...
     + U2_array(:, :, 1)' * R2_array_cumulative(:, :, 1) * U2_array(:, :, 1) ...
     + X_array(:, :, 2)' * P2_array_cumulative(:, :, 1) * U2_array(:, :, 1);
+
 
 end

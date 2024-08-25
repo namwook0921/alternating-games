@@ -91,7 +91,8 @@ for i = T: -1: 2
        * (B1 * T1_array(:, :, i) - B2) + B2 * T2_array(:, :, i) * T1_array(:, :, i);
 
    % Compute Y2, Z2
-   Y2_array(:, :, i) = S2_array(:, :, i) * B1 * S1_array(:, :, i) + T2_array(:, :, i) * S1_array(:, :, i) - S2_array(:, :, i) * A;
+   Y2_array(:, :, i) = S2_array(:, :, i) * B1 * S1_array(:, :, i) + T2_array(:, :, i) * ...
+       S1_array(:, :, i) - S2_array(:, :, i) * A;
    Z2_array(:, :, i) = S2_array(:, :, i) * B1 * T1_array(:, :, i) + T2_array(:, :, i) * T1_array(:, :, i) - S2_array(:, :, i) * B2;
    
    % Compute Q2, R2, P2
