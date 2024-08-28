@@ -13,7 +13,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     % U2_array = zeros(U2_size(1), U2_size(2), T);
 
     step_threshold = 0.5;
-    converge_threshold = 10;
+    converge_threshold = 100;
 
     A_array = zeros(X_size(1), X_size(1), T);
     A_prime_array = zeros(X_size(1), X_size(1), T);
@@ -56,10 +56,9 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
 
     % Initial trajectory when there is no control
-    [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_X, T);
+    % [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_X, T);
 
 
-    disp(X_array)
 
     % Loop until converges
     while 1
@@ -127,12 +126,25 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
             [Q1_array(:, :, i), R1_array(:, :, i), q1_array(:, :, i), r1_array(:, :, i)] = quadraticizeCost(G1_x, G1_u, H1_x, H1_u, x, u1, X_prime_array(:, :, i), U1_array(:, :, i));
             [Q2_array(:, :, i), R2_array(:, :, i), q2_array(:, :, i), r2_array(:, :, i)] = quadraticizeCost(G2_x, G2_u, H2_x, H2_u, x, u2, X_array(:, :, i + 1), U2_array(:, :, i));
         end
+        
+        % disp("Q2")
+        % disp(Q2_array)
+        % disp("q2")
+        % disp(q2_array)
+        % disp("R2")
+        % disp(R2_array)
+        % disp("r2")
+        % disp(r2_array)
 
 
         % Find the solution on delta X
         [delta_X_array, delta_X_prime_array, S1_array, S2_array, T1_array, T2_array, delta_U1_array, delta_U2_array, alpha1_array, alpha2_array, L1, L2] ...
         = new_lq_cost_solution(X_zeros, first_B2, U2_zeros, A_array, A_prime_array, B1_array, B2_array, Q1_array, Q2_array, R1_array, R2_array, q1_array, q2_array, r1_array, r2_array, T);
    
+        % disp("Delta X")
+        % disp(delta_X_array)
+        % disp("Delta X'")
+        % disp(delta_X_prime_array)
 
         for step_num = 1:max_iter
             curr_eta = initial_eta * (eta_step ^ (step_num - 1));

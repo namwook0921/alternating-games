@@ -57,17 +57,17 @@ function [] = simple_test()
     
 
     % Graph of nth trajectory
-    x1 = squeeze(result_X_array(1, 1, :));
-    x2 = squeeze(result_X_array(2, 1, :));
-
-
-    figure;
-    plot(x1, x2, 'o-', 'DisplayName', 'Object 1');
-
-    xlabel('X1 Coordinate');
-    ylabel('X2 Coordinate');
-    legend show; 
-    grid on; 
+    % x1 = squeeze(result_X_array(1, 1, :));
+    % x2 = squeeze(result_X_array(2, 1, :));
+    % 
+    % 
+    % figure;
+    % plot(x1, x2, 'o-', 'DisplayName', 'Object 1');
+    % 
+    % xlabel('X1 Coordinate');
+    % ylabel('X2 Coordinate');
+    % legend show; 
+    % grid on; 
 
 
     A_array = repmat(A, 1, 1, T + 1);

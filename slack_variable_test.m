@@ -1,11 +1,12 @@
 function [] = slack_variable_test()
-    first_X = [1 1 1]';
 
-    syms x1 x2
+    syms x1 x2 x3
     syms v1 v2
     syms w1 w2
 
-    x = [x1; x2; 1];
+    x = [x1; x2; x3];
+
+    first_X = [1; 1; 1];
 
     u1 = [v1; v2];
     u2 = [w1; w2];
@@ -22,14 +23,14 @@ function [] = slack_variable_test()
           0 1;
           0 0];
 
-    % f = A * x + B1 * u1 + B2 * u2;
-    % 
-    % g1 = x2^2 + u1' * u1;
-    % g2 = (x2 - x1)^2 + u2' * u2;
+    f = A * x + B1 * u1 + B2 * u2;
 
-    Q1 = [0 0 1;
-          0 1 1;
-          1 1 0];
+    g1 = x2^2 + u1' * u1;
+    g2 = (x2 - x1)^2 + u2' * u2;
+
+    Q1 = [0 0 0;
+          0 1 0;
+          0 0 0];
 
     Q2 = [1 -1 0;
           -1 1 0;
@@ -46,6 +47,8 @@ function [] = slack_variable_test()
                 0 0];
 
     T = 2;
+
+    eta = 1;
 
     X_array = zeros(3, 1, T + 1);
     X_prime_array = zeros(3, 1, T);
@@ -95,19 +98,27 @@ function [] = slack_variable_test()
     P1 = [0 0;
         0 0;
         0 0];
-    P2 = [1 0;
+    P2 = [0 0;
+        0 0;
         0 0];
     P1_array = repmat(P1, 1, 1, T);
-    P2_array = repmat(P1, 1, 1, T);
+    P2_array = repmat(P2, 1, 1, T);
 
     [final_X_array, X_prime_array, S1_array, S2_array, T1_array, T2_array, U1_array, U2_array, L1, L2] ...
      = linear_offset_array_solution(first_X, first_B2, first_U2, A_array, A_prime_array, B1_array, B2_array, Q1_array, Q2_array, R1_array, R2_array, P1_array, P2_array, T);
 
-    disp(U1_array)
-    disp(U2_array)
+
+    % disp("X")
+    % disp(final_X_array)
+    % disp("X'")
+    % disp(X_prime_array)
+    % disp("U1")
+    % disp(U1_array)
+    % disp("U2")
+    % disp(U2_array)
     
-    % [final_X_array, result_X_prime_array, result_U1_array, result_U2_array, L1, L2] = ...
-    %     iLQR(f, g1, g2, x, u1, u2, T, result_X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 2);
+    [final_X_array, result_X_prime_array, result_U1_array, result_U2_array, L1, L2] = ...
+        iLQR(f, g1, g2, x, u1, u2, T, final_X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 2);
 
 
     % Graph of nth trajectory
