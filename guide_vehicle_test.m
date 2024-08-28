@@ -53,30 +53,11 @@ function [] = guide_vehicle_test()
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 0.5;
+    eta = 0.9;
 
 
     [new_X_array, new_X_prime_array, new_U1_array, new_U2_array, L1, L2] = ...
-        iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 1);
-
-
-    x1 = squeeze(new_X_array(1, 1, :));
-    y1 = squeeze(new_X_array(2, 1, :));
-    x2 = squeeze(new_X_array(5, 1, :));
-    y2 = squeeze(new_X_array(6, 1, :));
-
-
-    figure;
-    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
-
-    hold on;
-
-    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-    xlabel('X Coordinate');
-    ylabel('Y Coordinate');
-    legend show; 
-    grid on; 
+        iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta);
 
 
 

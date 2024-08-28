@@ -10,7 +10,6 @@ function [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prim
         X_prime_array(:, :, i) = double(subs(f, allVars, [X_array(:, :, i); U1_array(:, :, i); U2_array(:, :, i - 1)]));
     end
 
-
     X_array(:, :, T + 1) = double(subs(f, allVars, [X_prime_array(:, :, T); U1_array(:, :, T); U2_array(:, :, T)]));
 
 end    
