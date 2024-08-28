@@ -53,7 +53,7 @@ function [] = simple_test()
         = general_solution(first_X, first_U2, A, B1, B2, Q1, Q2, R1, R2, T);
 
     
-    % disp(U1_array)
+    disp(U1_array)
     
 
     % Graph of nth trajectory

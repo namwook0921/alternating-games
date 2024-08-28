@@ -39,9 +39,9 @@ first_B2 = [first_B2; zeros(m, 1)'];
 
 [X_array, X_prime_array, S1_array, S2_array, T1_array, T2_array, U1_array, U2_array, L1, L2] ...
     = linear_offset_array_solution(X0, first_B2, first_U2, new_A_array, new_A_prime_array, new_B1_array, new_B2_array, new_Q1_array, new_Q2_array, R1_array, R2_array, new_P1_array, new_P2_array, T);
- 
-disp(S1_array)
-disp(S2_array)
+% 
+% disp(S1_array)
+% disp(S2_array)
 
 S1_size = size(S1_array(:, :, 1));
 S2_size = size(S2_array(:, :, 1));

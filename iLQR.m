@@ -7,13 +7,13 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U2_size = size(U2_array(:, :, 1));
     U2_zeros = zeros(U2_size);
 
-    % X_array = zeros(X_size(1), X_size(2), T + 1);
-    % X_prime_array = zeros(X_size(1), X_size(2), T);
-    % U1_array = zeros(U1_size(1), U1_size(2), T);
-    % U2_array = zeros(U2_size(1), U2_size(2), T);
+    X_array = zeros(X_size(1), X_size(2), T + 1);
+    X_prime_array = zeros(X_size(1), X_size(2), T);
+    U1_array = zeros(U1_size(1), U1_size(2), T);
+    U2_array = zeros(U2_size(1), U2_size(2), T);
 
-    step_threshold = 0.5;
-    converge_threshold = 100;
+    step_threshold = 0.1;
+    converge_threshold = 0.01;
 
     A_array = zeros(X_size(1), X_size(1), T);
     A_prime_array = zeros(X_size(1), X_size(1), T);
@@ -56,7 +56,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
 
     % Initial trajectory when there is no control
-    % [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_X, T);
+    [X_array, X_prime_array] = get_trajectory(f, x, u1, u2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_X, T);
 
 
 
