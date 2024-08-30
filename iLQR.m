@@ -1,5 +1,5 @@
 function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
-    iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, plot_num)
+    iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num)
 
     X_size = size(X_array(:, :, 1));
     X_zeros = zeros(X_size);
@@ -14,8 +14,6 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     U1_array = zeros(U1_size(1), U1_size(2), T);
     U2_array = zeros(U2_size(1), U2_size(2), T);
 
-    step_threshold = 0.5;
-    converge_threshold = 0.001;
 
     A_array = zeros(X_size(1), X_size(1), T);
     A_prime_array = zeros(X_size(1), X_size(1), T);
@@ -68,7 +66,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
         n = n + 1;
         
         if plot_num == 1
-            if mod(n, 5) == 0
+            if mod(n, 2) == 0
                 % Graph of nth trajectory
                 x1 = squeeze(X_array(1, 1, :));
                 y1 = squeeze(X_array(2, 1, :));
