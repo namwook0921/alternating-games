@@ -39,25 +39,28 @@ function [] = guide_vehicle_test()
 
     f = A * x + B1 * u1 + B2 * u2;
 
-    g1 = 8*(x1 - 0.2)^2 + 2*(u1' * u1) + 2*(v1 - 1)^2;
-    g2 = 8*(x2 - x1)^2 + 2*(v2 - 1)^2 + 0.1 * (u2' * u2);
+    g1 = 8*(x1 - 0.2)^2 + 2*(v1 - 1)^2 + 1*(u1' * u1);
+    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + 1*(u2' * u2);
 
 
     first_U2 = [0; 0];
     first_B2 = zeros([8, 2]);
 
-    T = 25;
+    T = 40;
 
     X_array = zeros(8, 1, T + 1);
     X_prime_array = zeros(8, 1, T);
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 0.5;
+    eta = 0.8;
+    step_threshold = 0.2;
+    converge_threshold = 0.005;
+    plot_num = 1;
 
 
     [new_X_array, new_X_prime_array, new_U1_array, new_U2_array, L1, L2] = ...
-        iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 0.2, 0.01, 1);
+        iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num);
 
 
     x1 = squeeze(new_X_array(1, 1, :));

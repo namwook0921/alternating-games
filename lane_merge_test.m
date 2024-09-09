@@ -1,21 +1,32 @@
-function [] = guide_vehicle_test_inverse()
-    delta_t = 0.05;
-    first_X = [1 0 pi/2 1 0.5 0.5 2*pi/3 1]';
+function [] = lane_merge_test()
 
-    syms x1 y1 beta1 v1 x2 y2 beta2 v2
+    delta_t = 0.05;
+
+    first_X =  [
+        0.9;
+        1.2;
+        0.0;
+        3.5;
+        0.5;
+        0.6;
+        0.0;
+        3.8;
+    ];
+
+    syms x1 y1 theta1 v1 x2 y2 theta2 v2
     syms omega1 alpha1
     syms omega2 alpha2
 
-    x = [x1; y1; beta1; v1; x2; y2; beta2; v2];
+    x = [x1; y1; theta1; v1; x2; y2; theta2; v2];
     u1 = [omega1; alpha1];
     u2 = [omega2; alpha2];
 
-    A = [1 0 0 delta_t * cos(beta1) 0 0 0 0;
-         0 1 0 delta_t * sin(beta1) 0 0 0 0;
+    A = [1 0 0 delta_t * sin(theta1) 0 0 0 0;
+         0 1 0 delta_t * cos(theta1) 0 0 0 0;
          0 0 1 0 0 0 0 0;
          0 0 0 1 0 0 0 0;
-         0 0 0 0 1 0 0 delta_t * cos(beta2);
-         0 0 0 0 0 1 0 delta_t * sin(beta2);
+         0 0 0 0 1 0 0 delta_t * sin(theta2);
+         0 0 0 0 0 1 0 delta_t * cos(theta2);
          0 0 0 0 0 0 1 0;
          0 0 0 0 0 0 0 1];
 
@@ -39,23 +50,28 @@ function [] = guide_vehicle_test_inverse()
 
     f = A * x + B1 * u1 + B2 * u2;
 
-    g1 = 4*(x2 - x1)^2 + 4*(v1 - 1)^2 + 1*(u1' * u1);
-    g2 = 8*(x2 - 0.2)^2 + 2*(v2 - 1)^2 + 1*(u2' * u2);
+    d_safe = 0.45;
+
+    control = abs(sqrt((x1 - x2)^2 + (y1 - y2)^2) - d_safe) - (sqrt((x1 - x2)^2 + (y1 - y2)^2) - d_safe) ;
+
+    g1 = 10*(x1 - 0.4)^2 + 6*(v1 - v2)^2 + 2*(u1' * u1) + 1000*control;
+    g2 = theta2^4 + 2*(u2' * u2) + 1000*control;
+
 
 
     first_U2 = [0; 0];
     first_B2 = zeros([8, 2]);
 
-    T = 40;
+    T = 20;
 
     X_array = zeros(8, 1, T + 1);
     X_prime_array = zeros(8, 1, T);
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 0.5;
+    eta = 0.8;
     step_threshold = 0.2;
-    converge_threshold = 0.01;
+    converge_threshold = 0.005;
     plot_num = 1;
 
 
@@ -82,5 +98,7 @@ function [] = guide_vehicle_test_inverse()
     grid on; 
 
 
+    [traj] = get_full_trajectory(X_array, X_prime_array, T);
 
+    disp(traj)
 end

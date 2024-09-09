@@ -32,7 +32,7 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
     initial_eta = eta;
     eta_step = 0.5;
-    max_iter = 10;
+    max_iter = 5;
 
     allVars = [x; u1; u2];
 
@@ -65,28 +65,28 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
         disp(n)
         n = n + 1;
         
-        if plot_num == 1
-            if mod(n, 2) == 0
-                % Graph of nth trajectory
-                x1 = squeeze(X_array(1, 1, :));
-                y1 = squeeze(X_array(2, 1, :));
-                x2 = squeeze(X_array(5, 1, :));
-                y2 = squeeze(X_array(6, 1, :));
-    
-    
-                figure;
-                plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
-    
-                hold on;
-    
-                plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-    
-                xlabel('X Coordinate');
-                ylabel('Y Coordinate');
-                legend show; 
-                grid on; 
-            end
-        end
+        % if plot_num == 1
+        %     if true
+        %         % Graph of nth trajectory
+        %         x1 = squeeze(X_array(1, 1, :));
+        %         y1 = squeeze(X_array(2, 1, :));
+        %         x2 = squeeze(X_array(5, 1, :));
+        %         y2 = squeeze(X_array(6, 1, :));
+        % 
+        % 
+        %         figure;
+        %         plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
+        % 
+        %         hold on;
+        % 
+        %         plot(x2, y2, 's-', 'DisplayName', 'Object 2');
+        % 
+        %         xlabel('X Coordinate');
+        %         ylabel('Y Coordinate');
+        %         legend show; 
+        %         grid on; 
+        %     end
+        % end
 
         if plot_num == 2
             % Graph of nth trajectory
@@ -219,9 +219,10 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     %     L1 = L1 + double(subs(g1, [x; u1], [X_prime_array(:, :, i); U1_array(:, :, i)]));
     %     L2 = L2 + double(subs(g2, [x; u2], [X_array(:, :, i + 1); U2_array(:, :, i)]));
     % end
-    % 
+
     % disp(L1);
     % disp(L2);
-
+     
+    
 
 end

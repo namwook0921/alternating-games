@@ -1,6 +1,6 @@
-function [] = guide_vehicle_test_inverse()
+function [] = guide_vehicle_subgame_perfect_test()
     delta_t = 0.05;
-    first_X = [1 0 pi/2 1 0.5 0.5 2*pi/3 1]';
+    first_X = [0.5 0.5 2*pi/3 1 1 0 pi/2 1]';
 
     syms x1 y1 beta1 v1 x2 y2 beta2 v2
     syms omega1 alpha1
@@ -39,8 +39,8 @@ function [] = guide_vehicle_test_inverse()
 
     f = A * x + B1 * u1 + B2 * u2;
 
-    g1 = 4*(x2 - x1)^2 + 4*(v1 - 1)^2 + 1*(u1' * u1);
-    g2 = 8*(x2 - 0.2)^2 + 2*(v2 - 1)^2 + 1*(u2' * u2);
+    g1 = 8*(x1 - 0.2)^2 + 2*(v1 - 1)^2 + 1*(u1' * u1);
+    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + 1*(u2' * u2);
 
 
     first_U2 = [0; 0];
@@ -53,9 +53,9 @@ function [] = guide_vehicle_test_inverse()
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 0.5;
+    eta = 0.8;
     step_threshold = 0.2;
-    converge_threshold = 0.01;
+    converge_threshold = 0.005;
     plot_num = 1;
 
 
@@ -82,5 +82,32 @@ function [] = guide_vehicle_test_inverse()
     grid on; 
 
 
+    subgame_first_X = new_X_array(:, :, 21);
+    subgame_first_U2 = new_U2_array(:, :, 20);
+    subgame_first_B2 = B2;
+    subgame_T = 20;
+
+    [subgame_X_array, subgame_X_prime_array, subgame_U1_array, subgame_U2_array, subgame_L1, subgame_L2] = ...
+        iLQR(f, g1, g2, x, u1, u2, subgame_T, X_array, X_prime_array, U1_array, U2_array, subgame_first_U2, subgame_first_B2, subgame_first_X, eta, step_threshold, converge_threshold, plot_num);
+
+    x1 = squeeze(subgame_X_array(1, 1, :));
+    y1 = squeeze(subgame_X_array(2, 1, :));
+    x2 = squeeze(subgame_X_array(5, 1, :));
+    y2 = squeeze(subgame_X_array(6, 1, :));
+
+
+    figure;
+    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
+
+    hold on;
+
+    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
+
+    xlabel('X Coordinate');
+    ylabel('Y Coordinate');
+    legend show; 
+    grid on; 
+
 
 end
+
