@@ -1,5 +1,5 @@
 function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
-    iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num)
+    iLQR_perturbation(f, g1, g2, x, u1, u2, T, T_middle, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num)
 
     X_size = size(X_array(:, :, 1));
     X_zeros = zeros(X_size);
@@ -212,8 +212,19 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
     end
 
 
+    SEED = 10;
+    rng(SEED);
+    perturbation = (0.05 * rand(size(X_array(:, :, 1))));
+    X_array(:, :, T_middle + 1) = X_array(:, :, T_middle + 1) + X_array(:, :, T_middle + 1) .* perturbation; 
 
-    
+    for i = T_middle + 1 : T
+        U1_array(:, :, i) =  - S1_array(:, :, i) * X_array(:, :, i) - T1_array(:, :, i) * U2_array(:, :, i - 1);
+        X_prime_array(:, :, i) = subs(f, allVars, [X_array(:, :, i); U1_array(:, :, i); U2_array(:, :, i - 1)]);
+
+        U2_array(:, :, i) = - S2_array(:, :, i) * X_prime_array(:, :, i) - T2_array(:, :, i) * U1_array(:, :, i);
+        X_array(:, :, i + 1) = subs(f, allVars, [new_X_prime_array(:, :, i); new_U1_array(:, :, i); new_U2_array(:, :, i)]);
+    end
+
 
     % Calculating cost
     % L1 = 0;
