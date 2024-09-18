@@ -1,4 +1,4 @@
-function [] = guide_vehicle_subgame_perfect_test()
+function [] = guide_vehicle_perturbation_test()
     delta_t = 0.05;
     first_X = [0.5 0.5 2*pi/3 1 1 0 pi/2 1]';
 
@@ -53,14 +53,14 @@ function [] = guide_vehicle_subgame_perfect_test()
     U1_array = zeros(2, 1, T);
     U2_array = zeros(2, 1, T);
 
-    eta = 0.8;
-    step_threshold = 0.2;
-    converge_threshold = 0.005;
+    eta = 0.5;
+    step_threshold = 0.5;
+    converge_threshold = 0.01;
     plot_num = 1;
 
 
     [new_X_array, new_X_prime_array, new_U1_array, new_U2_array, L1, L2] = ...
-        iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num);
+        iLQR_perturbation(f, g1, g2, x, u1, u2, T, T/2, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num);
 
 
     x1 = squeeze(new_X_array(1, 1, :));
@@ -81,14 +81,28 @@ function [] = guide_vehicle_subgame_perfect_test()
     legend show; 
     grid on; 
 
+    subgame_first_X = new_X_array(:, :, 21);
 
-    new_first_X = new_X_array(:, :, 21);
-    new_first_U2 = new_U2_array(:, :, 20);
-    new_first_B2 = B2;
-    new_T = 20;
+    subgame_first_U2 = new_U2_array(:, :, 20);
+    subgame_first_B2 = B2;
+    subgame_T = 20;
 
-    [subgame_X_array, subgame_X_prime_array, subgame_U1_array, nsubgame_U2_array, subgame_L1, subgame_L2]
+    [subgame_X_array, subgame_X_prime_array, subgame_U1_array, subgame_U2_array, subgame_L1, subgame_L2] = ...
+        iLQR(f, g1, g2, x, u1, u2, subgame_T, X_array, X_prime_array, U1_array, U2_array, subgame_first_U2, subgame_first_B2, subgame_first_X, eta, step_threshold, converge_threshold, plot_num);
 
+    full_X_array = cat(3, new_X_array(:, :, 1:20), subgame_X_array);
+
+    % Extract data
+    x1 = squeeze(full_X_array(1, 1, :));
+    y1 = squeeze(full_X_array(2, 1, :));
+    x2 = squeeze(full_X_array(5, 1, :));
+    y2 = squeeze(full_X_array(6, 1, :));
+
+
+    % Save the required variables to a .mat file after computations
+    save('perturbation_data.mat', 'x1', 'y1', 'x2', 'y2');
+    
 
 
 end
+

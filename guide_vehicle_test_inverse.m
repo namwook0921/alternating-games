@@ -54,7 +54,7 @@ function [] = guide_vehicle_test_inverse()
     U2_array = zeros(2, 1, T);
 
     eta = 0.5;
-    step_threshold = 0.2;
+    step_threshold = 0.5;
     converge_threshold = 0.01;
     plot_num = 1;
 
@@ -63,23 +63,17 @@ function [] = guide_vehicle_test_inverse()
         iLQR(f, g1, g2, x, u1, u2, T, X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, step_threshold, converge_threshold, plot_num);
 
 
-    x1 = squeeze(new_X_array(1, 1, :));
-    y1 = squeeze(new_X_array(2, 1, :));
-    x2 = squeeze(new_X_array(5, 1, :));
-    y2 = squeeze(new_X_array(6, 1, :));
+    full_X_array = new_X_array;
 
+    % Extract data
+    x2 = squeeze(full_X_array(1, 1, :));
+    y2 = squeeze(full_X_array(2, 1, :));
+    x1 = squeeze(full_X_array(5, 1, :));
+    y1 = squeeze(full_X_array(6, 1, :));
 
-    figure;
-    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
-
-    hold on;
-
-    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-    xlabel('X Coordinate');
-    ylabel('Y Coordinate');
-    legend show; 
-    grid on; 
+    % Save the required variables to a .mat file after computations
+    save('guide_vehicle_inverse_data.mat', 'x1', 'y1', 'x2', 'y2');
+    
 
 
 

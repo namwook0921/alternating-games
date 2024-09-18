@@ -1,8 +1,9 @@
-function [full_trajectory] = get_full_trajectory(X_array, X_prime_array, T);
+function [full_trajectory] = get_full_trajectory(X_array, X_prime_array, T)
     
-    X_null = zeros(size(X_array));
+    X_null = zeros(size(X_array(:, :, 1)));
     
     full_trajectory = repmat(X_null, 1, 1, 2*T + 1);
+
     full_trajectory(:, :, 1) = X_array(:, :, 1);
 
 
