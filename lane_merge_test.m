@@ -85,20 +85,10 @@ function [] = lane_merge_test()
     y2 = squeeze(new_X_array(6, 1, :));
 
 
-    figure;
-    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
 
-    hold on;
-
-    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-    xlabel('X Coordinate');
-    ylabel('Y Coordinate');
-    legend show; 
-    grid on; 
+    % Save the required variables to a .mat file after computations
+    save('lane_merge_data.mat', 'x1', 'y1', 'x2', 'y2');
 
 
-    [traj] = get_full_trajectory(X_array, X_prime_array, T);
 
-    disp(traj)
 end

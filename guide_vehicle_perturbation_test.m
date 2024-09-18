@@ -68,18 +68,8 @@ function [] = guide_vehicle_perturbation_test()
     x2 = squeeze(new_X_array(5, 1, :));
     y2 = squeeze(new_X_array(6, 1, :));
 
-
-    figure;
-    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
-
-    hold on;
-
-    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-    xlabel('X Coordinate');
-    ylabel('Y Coordinate');
-    legend show; 
-    grid on; 
+    % Save the required variables to a .mat file after computations
+    save('perturbation_policy_data.mat', 'x1', 'y1', 'x2', 'y2');
 
     subgame_first_X = new_X_array(:, :, 21);
 

@@ -1,4 +1,4 @@
-function [] = nash_comparison_test()
+function [] = lane_exchange_test()
     
     first_X = [-1 0.1 0 1.2 1 0 0 1]';
     delta_t = 0.05;
@@ -73,17 +73,10 @@ function [] = nash_comparison_test()
     y2 = squeeze(new_X_array(7, 1, :));
 
 
-    figure;
-    plot(x1, y1, 'o-', 'DisplayName', 'Object 1');
+    % Save the required variables to a .mat file after computations
+    save('lane_exchange_data.mat', 'x1', 'y1', 'x2', 'y2');
 
-    hold on;
 
-    plot(x2, y2, 's-', 'DisplayName', 'Object 2');
-
-    xlabel('X Coordinate');
-    ylabel('Y Coordinate');
-    legend show; 
-    grid on; 
 
 
 
