@@ -41,7 +41,7 @@ function [] = lane_exchange_test()
     f = A * x + B1 * u1 + B2 * u2;
 
     d_target = (px1 - 1)^2 + (py1 - 10)^2 + (px2 + 1)^2 + (py2 - 10)^2;
-    d_safe = 1/2 * ((px1 - px2)^2 + (py1 - py2)^2);
+    d_safe = 1/t2 * ((px1 - px2)^2 + (py1 - py2)^2);
 
     g1 = d_target - d_safe + vx1^2 + (vy1 - 1)^2+ 4*(u1'*u1);
     g2 = d_target - d_safe + vx2^2 + (vy2 - 1)^2+ 4*(u2'*u2);

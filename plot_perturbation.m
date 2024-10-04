@@ -12,7 +12,7 @@ function [] = plot_perturbation()
     figure;
     
     % Plot Player 1
-    scatter(x1, y1, 70, 's', 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 'flat', 'AlphaData', alpha_values, 'DisplayName', 'Player A');
+    scatter(x1, y1, 70, 's', 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 'flat', 'AlphaData', alpha_values, 'DisplayName', 'Player A');
     
     hold on;
     

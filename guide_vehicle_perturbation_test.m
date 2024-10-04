@@ -39,8 +39,8 @@ function [] = guide_vehicle_perturbation_test()
 
     f = A * x + B1 * u1 + B2 * u2;
 
-    g1 = 8*(x1 - 0.2)^2 + 2*(v1 - 1)^2 + 1*(u1' * u1);
-    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + 1*(u2' * u2);
+    g1 = 8*(x2 - 0.2)^2 + 2*(v1 - 1)^2 + (beta1 - pi/2)^2 + 1*(u1' * u1);
+    g2 = 4*(x2 - x1)^2 + 4*(v2 - 1)^2 + (beta2 - pi/2)^2 + 1*(u2' * u2);
 
 
     first_U2 = [0; 0];

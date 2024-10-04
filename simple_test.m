@@ -100,7 +100,7 @@ function [] = simple_test()
 
 
     [final_X_array, result_X_prime_array, result_U1_array, result_U2_array, L1, L2] = ...
-        iLQR(f, g1, g2, x, u1, u2, T, final_X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 0.5, 0.001 2);
+        iLQR(f, g1, g2, x, u1, u2, T, final_X_array, X_prime_array, U1_array, U2_array, first_U2, first_B2, first_X, eta, 0.5, 0.001, 2);
 
 
     % Graph of nth trajectory

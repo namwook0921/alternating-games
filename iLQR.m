@@ -158,7 +158,8 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
             end
 
-    
+
+            %line search
             step_converged = true;
 
             for i = 1:T
@@ -211,18 +212,14 @@ function [X_array, X_prime_array, U1_array, U2_array, L1, L2] = ...
 
     end
 
-
-
-    
-
     % Calculating cost
-    % L1 = 0;
-    % L2 = 0;
-    % 
-    % for i = 1 : T
-    %     L1 = L1 + double(subs(g1, [x; u1], [X_prime_array(:, :, i); U1_array(:, :, i)]));
-    %     L2 = L2 + double(subs(g2, [x; u2], [X_array(:, :, i + 1); U2_array(:, :, i)]));
-    % end
+    L1 = 0;
+    L2 = 0;
+
+    for i = 1 : T
+        L1 = L1 + double(subs(g1, [x; u1], [X_prime_array(:, :, i); U1_array(:, :, i)]));
+        L2 = L2 + double(subs(g2, [x; u2], [X_array(:, :, i + 1); U2_array(:, :, i)]));
+    end
 
     % disp(L1);
     % disp(L2);
